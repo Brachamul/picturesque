@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load meta_tags %}
+
+
+{% block content %}
+
+<form action="" method="post" enctype="multipart/form-data">
+	<div class="form-group">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="hidden" name="user" value="{{ user.pk }}">
+	<input type="submit" value="Send" />
+	</div>
+</form>
+
+
+{% endblock %}
