@@ -8,11 +8,14 @@ from django.contrib.auth.decorators import login_required
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER
 
-urlpatterns = patterns('',
-    url(r'^$', RedirectView.as_view(url=reverse_lazy('list_media'), permanent=False)),
+urlpatterns = [
+#	url(r'^$', RedirectView.as_view(url=reverse_lazy('media_list'), permanent=False)),
 	url(r'^admin/', include(admin.site.urls), name='admin'),
 	url(r'^medium/', include('medium.urls'), name='medium'),
-)
+	url('^', include('django.contrib.auth.urls')),
+	url(r'^progressbarupload/', include('progressbarupload.urls')),
+]
+
 
 from django.conf import settings
 if settings.DEBUG:

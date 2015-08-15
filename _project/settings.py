@@ -28,7 +28,8 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles',
 	'medium',
 	'PIL',
-	'storages' # django-storage-redux
+	'storages', # django-storage-redux
+	'bootstrap3', # django-bootstrap3
 )
 
 MIDDLEWARE_CLASSES = (
@@ -90,39 +91,89 @@ STATICFILES_DIRS = (
 
 ### CLOUD STORAGE WITH AMAZON S3 !
 
-# https://github.com/jschneier/django-storages
+CLOUD_STORAGE = False
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+if CLOUD_STORAGE :
 
-# https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/
+	# https://github.com/jschneier/django-storages
 
-AWS_HEADERS = {  # see http://developer.yahoo.com/performance/rules.html#expires
+	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+	# https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/
+
+	AWS_HEADERS = {  # see http://developer.yahoo.com/performance/rules.html#expires
 		'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
 		'Cache-Control': 'max-age=94608000',
+		}
+
+	AWS_STORAGE_BUCKET_NAME = 'picturesque'
+	AWS_ACCESS_KEY_ID = 'AKIAJPF2RKAOQO7OY7XQ'
+	AWS_SECRET_ACCESS_KEY = '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'
+
+	# Tell django-storages that when coming up with the URL for an item in S3 storage, keep
+	# it simple - just use this domain plus the path. (If this isn't set, things get complicated).
+	# This controls how the `static` template tag from `staticfiles` gets expanded, if you're using it.
+	# We also use it in the next setting.
+	AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+	# This is used by the `static` template tag from `static`, if you're using that. Or if anything else
+	# refers directly to STATIC_URL. So it's safest to always set it.
+	STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+
+	# Tell the staticfiles app to use S3Boto storage when writing the collected static files (when
+	# you run `collectstatic`).
+	STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+
+
+### Logging
+
+LOGGING = {
+	'version': 1,
+	'disable_existing_loggers': True,
+	'formatters': {
+		'standard': {
+			'format': '%(asctime)s %(levelname)s %(name)s %(message)s'
+		},
+	},
+	'handlers': {
+		'default': {
+			'level':'DEBUG',
+			'class':'logging.handlers.RotatingFileHandler',
+			'filename': 'log_loggidy.log',
+			'maxBytes': 1024*1024*5, # 5 MB
+			'backupCount': 5,
+			'formatter':'standard',
+		},  
+		'request_handler': {
+				'level':'DEBUG',
+				'class':'logging.handlers.RotatingFileHandler',
+				'filename': 'log_django_request.log',
+				'maxBytes': 1024*1024*5, # 5 MB
+				'backupCount': 5,
+				'formatter':'standard',
+		},
+	},
+	'loggers': {
+
+		'': {
+			'handlers': ['default'],
+			'level': 'DEBUG',
+			'propagate': True
+		},
+		'django.request': { # Stop SQL debug from logging to main logger
+			'handlers': ['request_handler'],
+			'level': 'DEBUG',
+			'propagate': False
+		},
 	}
-
-AWS_STORAGE_BUCKET_NAME = 'picturesque'
-AWS_ACCESS_KEY_ID = 'AKIAJPF2RKAOQO7OY7XQ'
-AWS_SECRET_ACCESS_KEY = '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'
-
-# Tell django-storages that when coming up with the URL for an item in S3 storage, keep
-# it simple - just use this domain plus the path. (If this isn't set, things get complicated).
-# This controls how the `static` template tag from `staticfiles` gets expanded, if you're using it.
-# We also use it in the next setting.
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
-# This is used by the `static` template tag from `static`, if you're using that. Or if anything else
-# refers directly to STATIC_URL. So it's safest to always set it.
-STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
-
-# Tell the staticfiles app to use S3Boto storage when writing the collected static files (when
-# you run `collectstatic`).
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+}
 
 
 
 
-# Template location
+
+### Templates
 
 TEMPLATE_DIRS = (
 	os.path.join((BASE_DIR), "static", "templates"),
@@ -146,14 +197,46 @@ IMPORT_BOOTSTRAP_JS = '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.
 IMPORT_BOOTSTRAP_CSS = '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">'
 
 
+
+
 # MEDIUM SETTING
 
 MEDIUM_SOURCES_URL = 'uploaded/'
+
+MEDIUM_RATIONALIZED_URL = 'rationalized/'
+RATIONALIZED_WIDTH = 1920
+RATIONALIZED_HEIGHT = 1080
+
 MEDIUM_THUMBNAILS_URL = 'thumbnails/'
-THUMBNAIL_WIDTH = 1600
-THUMBNAIL_HEIGHT = 900
+THUMBNAIL_WIDTH = 640
+THUMBNAIL_HEIGHT = 360
 
 SUCCESSFUL_MEDIA_UPLOAD_MESSAGE = 'Vos photos / vidéos ont bien été chargées.'
+
+
+
+
+
+
+
+
+### Progress Bar
+
+# django-progressbarupload
+
+INSTALLED_APPS += ('progressbarupload', )
+
+FILE_UPLOAD_HANDLERS = (
+   "progressbarupload.uploadhandler.ProgressBarUploadHandler",
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+)
+
+PROGRESSBARUPLOAD_INCLUDE_JQUERY = False
+
+
+
+
 
 ##########################
 #  Settings localisables :

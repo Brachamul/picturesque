@@ -1,17 +1,34 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
 {% load meta_tags %}
-
+{% load progress_bar %}
 
 {% block content %}
 
-<form action="" method="post" enctype="multipart/form-data">
-	<div class="form-group">
+
+<form class="col-sm-8 col-md-6 col-lg-4" style="margin:auto; float: none;" action="" method="post" enctype="multipart/form-data">
+	<h1>Téléverser de nouvelles photos ou vidéos</h1>
+	<hr>
 	{% csrf_token %}
-	{{ form.as_p }}
-	<input type="hidden" name="user" value="{{ user.pk }}">
-	<input type="submit" value="Send" />
-	</div>
+	{% bootstrap_form form %}
+	{% progress_bar %}
+	<hr>
+	{% buttons %}
+		<button type="submit" class="btn btn-primary btn-block">
+			{% bootstrap_icon "cloud-upload" %} Envoyer
+		</button>
+	{% endbuttons %}
 </form>
 
+<script>
+	
+jQuery(function(){
+	$('#progressBar').wrap('<div class="progress hide" id="progress-wrapper"></div>').addClass('progress-bar progress-bar-striped active')
+	// changed progress bar code to replace <progress> element with <div class="progress-bar">
+})
+
+</script>
+
+{% progress_bar_media %}
 
 {% endblock %}

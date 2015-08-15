@@ -46,8 +46,6 @@ footer { margin-top: 4em; }
 .dropdown-menu>li>a:not(:hover) { color: #666; }
 .dropdown-menu .divider { margin: 5px 0; }
 
-input:invalid:not(:focus) { border-color: red; }
-
 .navbar .profile-picture { padding: 9px; } /* interacts with the image size (32px) to fit the bar */
 .navbar .profile-picture img { border-radius: 4px; margin-right: .5em; height: 32px;}
 .navbar .navbar-nav > .open > a, .navbar .navbar-nav > .open > a:hover, .navbar .navbar-nav > .open > a:focus {
@@ -119,6 +117,8 @@ a:active { color: #D5651D; outline: 0; }
 .link:hover { color: #E4742C; cursor: pointer; }
 
 a h1 { color: #EC7C34 !important; }
+
+h1 { font-weight: bold; text-transform: uppercase; color: #999; padding-bottom: .25em; border-bottom: .15em solid #999}
 
 .panel-heading a,
 .panel-heading a:visited { color: #777; }

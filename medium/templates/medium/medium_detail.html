@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load meta_tags %}
+
+{% block content %}
+
+<p>
+	<img id="core" src='{{ object.main.url }}'/>
+</p>
+
+<div class="container-fluid">
+
+	<p><strong>Propriétaire : </strong>{{ object.owner }}</p>
+
+	<p>
+		<strong>
+		{% if object.content_type == "IMAGE" %}
+			Dans cette image :
+		{% elif object.content_type == "VIDEO" %}
+			Dans cette vidéo :
+		{% else %}
+			Dans ce média :
+		{% endif %}
+		</strong>
+
+		{% if object.actor_set.all %}
+			{% for actor in object.actor_set.all %}
+				{{ actor.name }}
+			{% endfor %}
+		{% else %}
+			Personne
+		{% endif %}
+
+	</p>
+
+	<p><strong>Date : </strong>{{ object.date|date:"SHORT_DATE_FORMAT"|default:"Non datée" }}</p>
+
+	<p><strong>Taille : </strong>{{ object.storage_size|filesizeformat }}</p>
+
+
+</div>
+
+<style>
+
+#core { max-width: 100vw; max-height: 56.25vw; }
+
+#main-container { padding: 0; }
+
+</style>
+
+{% endblock %}
+

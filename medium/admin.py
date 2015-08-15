@@ -8,3 +8,4 @@ from .models import *
 #admin.site.register(Post,PostAdmin)
 
 admin.site.register(Medium)
+admin.site.register(Actor)

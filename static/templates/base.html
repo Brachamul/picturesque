@@ -27,11 +27,6 @@
 					{{ user }}
 				</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="{{ user.pk }}">
-						<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-						Mon profil</a>
-					</li>
-					<li class="divider"></li>
 					<li><a href="#">
 						<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
 						Déconnexion</a>
@@ -39,12 +34,19 @@
 				</ul>
 			</li>
 
-			<li>
-				<a href="{% url 'upload_media' %}">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle"
+				data-toggle="dropdown" role="button" aria-expanded="false">
 					<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
 				</a>
+				<ul class="dropdown-menu" role="menu">
+					<li>
+						<a href="{% url 'upload_media' %}"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Uploader</a>
+					</li>
+				</ul>
 			</li>
 
+{% comment %}
 			<li id="notifications" class="dropdown tout-vu"> <!-- par défaut, on fait comme si pas de notifs -->
 				<a id="notification-loader" href="#" class="dropdown-toggle"
 				data-toggle="dropdown" role="button" aria-expanded="false">
@@ -58,6 +60,8 @@
 
 
 			</li>
+{% endcomment %}
+
 
 		</ul>
 		</div><!-- end collapse -->

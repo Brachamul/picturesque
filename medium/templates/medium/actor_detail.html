@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load meta_tags %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+	<h2>{{ object.name }}</h2>
+
+	<div class="photo-gallery row">
+		
+		{% for medium in object.media.all %}
+		<a class="col-sm-6 col-md-4 col-lg-3" href="{% url 'medium' medium.pk %}">
+			<img src='{{ medium.thumbnail.url }}'/>
+		</a>
+		{% endfor %}
+		
+	</div>
+
+</div>
+
+<style>
+
+.photo-gallery img { width: 100%; }
+.photo-gallery [class^="col"] { padding: 10px; }
+	
+
+</style>
+
+{% endblock %}
+

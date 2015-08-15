@@ -3,26 +3,44 @@
 
 {% block content %}
 
+<h1>{{ title }}</h1>
+
 <div class="container-fluid">
 
-	<h2>Photos & Vidéos</h2>
+{% if object_list %}
 
 	<div class="photo-gallery row">
 		
 		{% for medium in object_list %}
-		<div class="col-sm-6 col-md-4 col-lg-3">
+		<a class="col-sm-6 col-md-4 col-lg-3" href="{% url 'medium_detail' medium.pk %}">
 			<img src='{{ medium.thumbnail.url }}'/>
-		</div>
+		</a>
 		{% endfor %}
 		
 	</div>
+
+{% else %}
+
+	<p>Vous n'avez pas encore chargé de photos ni de vidéos</p>
+
+{% endif %}
+
+
 
 </div>
 
 <style>
 
 .photo-gallery img { width: 100%; }
-.photo-gallery [class^="col"] { padding: 10px; }
+.photo-gallery [class^="col"] {
+	display: block;
+	padding: 10px;
+}
+
+@media screen and (max-width: 767px) {
+	.photo-gallery [class^="col"] { padding: 0; margin-bottom: 10px; }
+}
+
 	
 
 </style>
