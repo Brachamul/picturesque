@@ -13,7 +13,7 @@ urlpatterns = [
 	url(r'^admin/', include(admin.site.urls), name='admin'),
 	url(r'^medium/', include('medium.urls'), name='medium'),
 	url(r'^accounts/', include('django.contrib.auth.urls')),
-	url(r'^progressbarupload/', include('progressbarupload.urls')),
+#	url(r'^progressbarupload/', include('progressbarupload.urls')),
 ]
 
 

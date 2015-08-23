@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<h1>{{ title }}</h1>
+{% if title %}<h1>{{ title }}</h1>{% endif %}
 
 <div class="container-fluid">
 
@@ -14,9 +14,16 @@
 	<div class="photo-gallery row">
 		
 		{% for medium in object_list %}
-		<a href="{% url 'medium_detail' medium.pk %}">
-			<img src='{{ medium.thumbnail.url }}'/>
-		</a>
+		<div>
+			<a href="{% url 'medium_detail' medium.pk %}">
+				<img src='{{ medium.thumbnail.url }}'/>
+			</a>
+			<div class="tagbox">
+			{% for tag in medium.tags.all %}
+				<span class="tag">{{ tag }}</span>
+			{% endfor %}
+			</div>
+		</div>
 		{% endfor %}
 		
 	</div>
@@ -25,15 +32,6 @@
 
 	<p>Vous n'avez pas encore chargé de photos.</p>
 	<p><a href="{% url 'upload_media' %}" class="btn btn-primary">{% bootstrap_icon "cloud-upload" %} Charger mes premières photos</a></p>
-
-
-{% comment %}
-
-<div id="gallery">
-        <div class="body"></div>
-</div>
-
-{% endcomment %}
 
 {% endif %}
 
@@ -46,100 +44,37 @@
 	max-height: 250px;
 	border-radius: 3px;
 	box-shadow: 0px 0px 4rem -1rem #999;
+	transition: opacity .5s;
+	opacity: .85;
+	background-color: black;
 }
-.photo-gallery img:hover { box-shadow: 0px 0px 4rem -1rem #999; }
 
-.photo-gallery a { padding: 10px; display: inline-block; max-width: 100%; }
+.photo-gallery img:hover { opacity: 1;}
+
+.photo-gallery > div { padding: 10px; display: inline-block; max-width: 100%; position: relative; }
 
 @media screen and (max-width: 767px) {
 	.photo-gallery [class^="col"] { padding: 0; margin-bottom: 10px; }
 }
 
-.row { margin-right: -25px; margin-left: -25px; }	
+.row { margin-right: -25px; margin-left: -25px; }
+
+.tagbox {
+	position: absolute;
+	bottom: 1em;
+	right: 2em;
+}
+
+.tag {
+	border: 1px solid #999; border-radius: 3px;
+	padding: 0 .25em; margin: .25em 0;
+	display: inline-block;
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+}
 
 </style>
 
-{% comment %}
-
-{% endblock %}
-
-
-{% block scripts %}
-
-<script type="text/javascript" src="{% static 'plugins/jquery-photowall/jquery-photowall.js' %}"></script>
-<link rel="stylesheet" href="{% static 'plugins/jquery-photowall/jquery-photowall.css' %}" >
-
-<script type="text/javascript">
-$(document).ready(function(){
-    PhotoWall.init({
-        el:             '#gallery'               // Gallery element
-        ,zoom:          true                     // Use zoom
-        ,zoomAction:    'mouseenter'             // Zoom on action
-        ,zoomTimeout:   500                      // Timeout before zoom
-        ,zoomDuration:  100                      // Zoom duration time
-        ,showBox:       false                     // Enavle fullscreen mode
-        ,showBoxSocial: false                    // Show social buttons
-        ,padding:       10                       // padding between images in gallery
-        ,lineMaxHeight: 150                      // Max set height of pictures line
-                                                 // (may be little bigger due to resize to fit line)
-    });
-
-    /*
-
-        Photo object consist of:
-
-        {   // big image src,width,height and also image id
-            id:
-            ,img:       //src
-            ,width:
-            ,height:
-            ,th:{
-                src:      //normal thumbnail src
-                zoom_src: //zoomed normal thumbnail src
-                zoom_factor: // factor of image zoom
-                ,width:   //width of normal thumbnail
-                ,height:  //height of normal thumbnail
-            }
-        };
-
-    */
-
-    //For example one of my gallery at Picasa
-    $.ajax({
-                url: 'https://picasaweb.google.com/data/feed/api/user/118283508237214694671/albumid/5685978516288199793'
-                         +'/?alt=json&fields=entry(gphoto:id,title,media:group(media:thumbnail,media:'
-                         +'content))&imgmax=720',
-                dataType: 'jsonp',
-                success: function(data){
-                    var photos = {}
-                if(!data.feed.entry) return;
-                for(var i in data.feed.entry) {
-                        var e     = data.feed.entry[i].media$group;
-                        var id    = data.feed.entry[i].gphoto$id.$t;
-
-                        var t1h   = e.media$thumbnail[2].height;
-                        var t1w   = e.media$thumbnail[2].width;
-                        var t1src = e.media$thumbnail[2].url
-
-                        var t2w   = Math.round(t1w * 1.5);
-                        var t2h   = Math.round(t1h * 1.5);
-
-                        var t2src = e.media$content[0].url+'/../../w'+t2w+'-h'+t2h+'/';
-
-                    var bsrc  = e.media$content[0].url;
-                    var bw    = e.media$content[0].width;
-                    var bh    = e.media$content[0].height;
-
-                        photos[id] = {id:id,img:bsrc,width:bw,height:bh,th:{src:t1src,width:t1w,height:t1h,zoom_src:t2src,zoom_factor:1.5}};
-
-                }
-                    PhotoWall.load(photos);
-            }
-        })
-	})
-</script>
-
-{% endcomment %}
 
 {% endblock%}
 

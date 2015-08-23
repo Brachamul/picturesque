@@ -7,7 +7,8 @@ from multiupload.fields import MultiFileField
 class UploadForm(forms.ModelForm):
 	class Meta :
 		model = Medium
-		fields = ['owner']
+		fields = ['tags']
+		widgets = {'tags': forms.CheckboxSelectMultiple()}
 #		labels = {'Media': 'Proriétaire :'}
 #		help_texts = {'owner': 'Le propriétaire des photos ou des vidéos pourra supprimer les photos.'}
 

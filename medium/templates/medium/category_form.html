@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load meta_tags %}
+
+{% block content %}
+
+
+<form class="col-sm-8 col-md-6 col-lg-4" style="margin:auto; float: none;" action="" method="post" enctype="multipart/form-data">
+	<h1>Créer une catégorie</h1>
+	{{ object }}
+	<hr>
+	{% csrf_token %}
+	{% bootstrap_form form %}
+	<hr>
+	{% buttons %}
+		<button type="submit" class="btn btn-primary btn-block">
+			{% bootstrap_icon "ok" %} Créer
+		</button>
+	{% endbuttons %}
+</form>
+
+<script>
+	
+jQuery(function(){
+		//
+})
+
+</script>
+
+
+{% endblock %}

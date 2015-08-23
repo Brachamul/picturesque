@@ -4,21 +4,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest, Http404
 from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from django.template import RequestContext
-from django.views.generic import TemplateView, DetailView, ListView, FormView
+from django.views.generic import TemplateView, DetailView, ListView, FormView, CreateView
 
 from .models import *
 from .forms import *
 
 class MediaWall(ListView):
 	model = Medium
-	def get_context_data(self, **kwargs):
-		context = super(MediaWall, self).get_context_data(**kwargs)
-		context['title'] = "Tous les médias"
-		return context
 
 class MediumDetailView(DetailView):
 	model = Medium
@@ -38,6 +34,26 @@ class MyMediaListView(ListView):
 
 class ActorDetailView(DetailView): model = Actor
 
+class ActorCreateView(CreateView):
+	model = Actor
+	fields = ['name']
+	success_url = reverse_lazy('media_wall')
+
+class CategoryCreateView(CreateView):
+	model = Category
+	fields = ['name']
+	success_url = reverse_lazy('media_wall')
+
+class TagCreateView(CreateView):
+	model = Tag
+	fields = ['category', 'name']
+	success_url = reverse_lazy('create_tag')
+	def get_context_data(self, **kwargs):
+		context = super(TagCreateView, self).get_context_data(**kwargs)
+		context['tags'] = Tag.objects.all()
+		return context
+
+
 class UploadFormView(FormView):
 	template_name = 'form.html'
 	form_class = UploadForm
@@ -46,7 +62,8 @@ class UploadFormView(FormView):
 	def form_valid(self, form):
 		owner = self.request.user
 		for each in form.cleaned_data['media']:
-			Medium.objects.create(source=each, owner=owner)
+			medium = Medium.objects.create(source=each, owner=owner)
+			medium.tags = form.cleaned_data['tags']
 #		messages.success(request, settings.SUCCESSFUL_MEDIA_UPLOAD_MESSAGE)
 		return super(UploadFormView, self).form_valid(form)
 
@@ -54,7 +71,7 @@ class UploadFormView(FormView):
 def actors_not_in_this_medium(request, pk):
 	try : medium = Medium.objects.get(pk=pk)
 	except Medium.DoesNotExist : raise Http404("Ce medium n'existe pas, ou plus.")
-	actors = Actor.objects.exclude(media__pk=pk) # actors not in this medium
+	actors = Actor.objects.exclude(medium__pk=pk) # actors not in this medium
 	html = ''
 	for actor in actors : html += '<a href="add-' + actor.slug + '" class="btn btn-default btn-sm"> + ' + actor.name + '</a> '
 	return HttpResponse(html)
@@ -65,15 +82,15 @@ def add_actor_to_medium(request, pk, slug):
 	except Medium.DoesNotExist : raise Http404("Ce medium n'existe pas, ou plus.")
 	try : actor = Actor.objects.get(slug=slug)
 	except Actor.DoesNotExist : raise Http404("Cet acteur n'existe pas, ou plus.")
-	actor.media.add(medium)
-	actor.save()
+	medium.actors.add(actor)
+	medium.save()
 	return HttpResponse(actor.name)
 
 @login_required
 def tags_not_in_this_medium(request, pk):
 	try : medium = Medium.objects.get(pk=pk)
 	except Medium.DoesNotExist : raise Http404("Ce medium n'existe pas, ou plus.")
-	tags = Tag.objects.exclude(media__pk=pk) # tags not in this medium
+	tags = Tag.objects.exclude(medium__pk=pk) # tags not in this medium
 	html = ''
 	for tag in tags : html += '<a href="tag-' + tag.name + '" class="btn btn-default btn-sm"> + ' + tag.name + '</a> '
 	return HttpResponse(html)
@@ -84,8 +101,8 @@ def add_tag_to_medium(request, pk, name):
 	except Medium.DoesNotExist : raise Http404("Ce medium n'existe pas, ou plus.")
 	try : tag = Tag.objects.get(name=name)
 	except tag.DoesNotExist : raise Http404("Cet acteur n'existe pas, ou plus.")
-	tag.media.add(medium)
-	tag.save()
+	medium.tags.add(tag)
+	medium.save()
 	return HttpResponse(tag.name)
 
 

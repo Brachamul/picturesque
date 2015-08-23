@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load meta_tags %}
+
+{% block content %}
+
+
+<form class="col-sm-8 col-md-6 col-lg-4" style="margin:auto; float: none;" action="" method="post" enctype="multipart/form-data">
+	<h1>Créer un tag</h1>
+	{{ object }}
+	<hr>
+	{% csrf_token %}
+	{% bootstrap_form form %}
+	<hr>
+	{% buttons %}
+		<button type="submit" class="btn btn-primary btn-block">
+			{% bootstrap_icon "ok" %} Créer
+		</button>
+	{% endbuttons %}
+	<br><br><br>
+	<p>
+		Un tag doit être le plus simple possible. Par exemple, une année (2015), un lieu (Sausset-les-Pins), une occasion (Naissance de Victor).
+	</p>
+	<p>
+		<strong>Tags existants :</strong></br>
+		{% for tag in tags %}
+				<span class="tag">{{ tag.name }}</span>
+		{% endfor %}
+	</p>
+</form>
+
+<script>
+	
+jQuery(function(){
+		//
+})
+
+</script>
+
+<style>
+.tag {
+	border: 1px solid #999; border-radius: 3px;
+	padding: 0 .25em; margin: .25em 0;
+	display: inline-block;
+}
+
+</style>
+
+
+{% endblock %}

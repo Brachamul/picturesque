@@ -22,8 +22,8 @@
 		</strong>
 
 		<span id="actors">
-		{% if object.actor_set.all %}
-			{% for actor in object.actor_set.all %}
+		{% if object.actors.all %}
+			{% for actor in object.actors.all %}
 				<span class="actor">{{ actor.name }}</span>
 			{% endfor %}
 		{% else %}
@@ -33,7 +33,6 @@
 
 		<br>
 		<a href="#" id="add-actor" class="add">Ajouter</a>
-		<span id="add-actor-list"></span>
 
 
 	</div>
@@ -42,8 +41,8 @@
 		<strong>Tags :<br> </strong>
 
 		<span class="tags">
-		{% if object.tag_set.all %}
-			{% for tag in object.tag_set.all %}
+		{% if object.tags.all %}
+			{% for tag in object.tags.all %}
 				<span class="tag">{{ tag.name }}</span>
 			{% endfor %}
 		{% else %}
@@ -53,7 +52,6 @@
 
 		<br>
 		<a href="#" id="add-tag" class="add">Ajouter</a>
-		<span id="add-tag-list"></span>
 
 
 	</div>
@@ -77,10 +75,15 @@
 
 </div>
 
+<div id="add-actor-list"></div>
+<div id="add-tag-list"></div>
+
 <br>
+
 <button class="btn btn-default" onclick="window.history.back()">
 	{% bootstrap_icon "arrow-left" %} Retour
 </button>
+
 
 <style>
 
@@ -120,7 +123,7 @@
 $(function() {
 	$('#add-actor').click(function(){
 		$.ajax({ url: "{% url 'actors_not_in_this_medium' object.pk %}" }).done(function(actors) {
-			$('#add-actor-list').html(actors).hide().fadeIn()
+			$('#add-actor-list').html(actors).hide().css('margin', '20px 0').fadeIn()
 			$('#add-actor, #no-actors').hide()
 			$('a[href*="add-"]').click(function(){
 				$(this).fadeOut()
@@ -138,7 +141,7 @@ $(function() {
 $(function() {
 	$('#add-tag').click(function(){
 		$.ajax({ url: "{% url 'tags_not_in_this_medium' object.pk %}" }).done(function(actors) {
-			$('#add-tag-list').html(actors).hide().fadeIn()
+			$('#add-tag-list').html(actors).hide().css('margin', '20px 0').fadeIn()
 			$('#add-tag, #no-tags').hide()
 			$('a[href*="tag-"]').click(function(){
 				$(this).fadeOut()

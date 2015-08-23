@@ -18,7 +18,9 @@
 	{% from_settings "IMPORT_BOOTSTRAP_CSS" %}
 
 	<link rel="stylesheet" href="{% static 'css/base.css' %}" >
+{% comment %}
 	<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+{% endcomment %}
 
 	<title>
 		{% if page_title %}{{ page_title }} - {% endif %}{% from_settings "SITE_NAME" %}

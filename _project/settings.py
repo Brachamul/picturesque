@@ -224,15 +224,15 @@ SUCCESSFUL_MEDIA_UPLOAD_MESSAGE = 'Vos photos / vidéos ont bien été chargées
 
 # django-progressbarupload
 
-INSTALLED_APPS += ('progressbarupload', )
-
-FILE_UPLOAD_HANDLERS = (
-   "progressbarupload.uploadhandler.ProgressBarUploadHandler",
-    "django.core.files.uploadhandler.MemoryFileUploadHandler",
-    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
-)
-
-PROGRESSBARUPLOAD_INCLUDE_JQUERY = False
+# INSTALLED_APPS += ('progressbarupload', )
+# 
+# FILE_UPLOAD_HANDLERS = (
+#    "progressbarupload.uploadhandler.ProgressBarUploadHandler",
+#     "django.core.files.uploadhandler.MemoryFileUploadHandler",
+#     "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+# )
+# 
+# PROGRESSBARUPLOAD_INCLUDE_JQUERY = False
 
 
 

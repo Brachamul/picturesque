@@ -10,6 +10,25 @@ from django.core.files.base import ContentFile
 
 from autoslug.fields import AutoSlugField
 
+
+class Category(models.Model):
+	name = models.CharField(max_length=255, unique=True, verbose_name="catégorie")
+	def __str__(self): return self.name
+
+
+class Tag(models.Model):
+	name = models.CharField(max_length=255, unique=True, verbose_name="tag")
+	slug = AutoSlugField(max_length=255, populate_from=('name'))
+	category = models.ForeignKey(Category, verbose_name="catégorie")
+	def __str__(self): return self.name
+
+class Actor(models.Model):
+	name = models.CharField(max_length=255, unique=True, verbose_name="prénom")
+	slug = AutoSlugField(max_length=255, populate_from=('name'))
+	user = models.OneToOneField(User, blank=True, null=True)
+	def __str__(self): return self.name
+
+
 class Medium(models.Model):
 
 	source = models.FileField(upload_to=settings.MEDIUM_SOURCES_URL, null=True)
@@ -18,9 +37,11 @@ class Medium(models.Model):
 	content_type = models.CharField(max_length=255, choices=(("VIDEO", "Vidéo"), ("IMAGE", "Image"), ("UNKNOWN", "Inconnu")), blank=True)
 	owner = models.ForeignKey(User, blank=True, null=True)
 	date = models.CharField(max_length=255, blank=True, null=True)
+	tags = models.ManyToManyField(Tag, blank=True)
+	actors = models.ManyToManyField(Actor, blank=True)
 
 	class Meta :
-		verbose_name_plural = "media"
+		verbose_name_plural = "photos"
 
 #	def __str__(self): str(self.source.name)
 
@@ -62,22 +83,6 @@ class Medium(models.Model):
 		if self.main : size += self.main.size
 		return size
 
-class Actor(models.Model):
-	name = models.CharField(max_length=255, unique=True)
-	slug = AutoSlugField(max_length=255, populate_from=('name'))
-	user = models.OneToOneField(User, blank=True, null=True)
-	media = models.ManyToManyField(Medium, blank=True, null=True)
-	def __str__(self): return self.name
-
-class Category(models.Model):
-	name = models.CharField(max_length=255, unique=True)
-	def __str__(self): return self.name
-
-class Tag(models.Model):
-	name = models.CharField(max_length=255, unique=True)
-	category = models.ForeignKey(Category, blank=True, null=True)
-	media = models.ManyToManyField(Medium, blank=True, null=True)
-	def __str__(self): return self.name
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
