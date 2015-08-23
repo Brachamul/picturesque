@@ -1,51 +1,159 @@
 {% extends "base.html" %}
 {% load meta_tags %}
+{% load bootstrap3 %}
 
 {% block content %}
 
-<p>
-	<img id="core" src='{{ object.main.url }}'/>
-</p>
+<img id="core" src='{{ object.main.url }}'/>
 
-<div class="container-fluid">
+<br>
 
-	<p><strong>Propriétaire : </strong>{{ object.owner }}</p>
+<div id="image-info" class="container-fluid">
 
-	<p>
+	<div>
 		<strong>
 		{% if object.content_type == "IMAGE" %}
-			Dans cette image :
+			Dans cette image :<br>
 		{% elif object.content_type == "VIDEO" %}
-			Dans cette vidéo :
+			Dans cette vidéo :<br>
 		{% else %}
-			Dans ce média :
+			Dans ce média :<br>
 		{% endif %}
 		</strong>
 
+		<span id="actors">
 		{% if object.actor_set.all %}
 			{% for actor in object.actor_set.all %}
-				{{ actor.name }}
+				<span class="actor">{{ actor.name }}</span>
 			{% endfor %}
 		{% else %}
-			Personne
+			<span id="no-actors">Personne</span>
 		{% endif %}
+		</span>
 
-	</p>
+		<br>
+		<a href="#" id="add-actor" class="add">Ajouter</a>
+		<span id="add-actor-list"></span>
 
-	<p><strong>Date : </strong>{{ object.date|date:"SHORT_DATE_FORMAT"|default:"Non datée" }}</p>
 
-	<p><strong>Taille : </strong>{{ object.storage_size|filesizeformat }}</p>
+	</div>
 
+	<div>
+		<strong>Tags :<br> </strong>
+
+		<span class="tags">
+		{% if object.tag_set.all %}
+			{% for tag in object.tag_set.all %}
+				<span class="tag">{{ tag.name }}</span>
+			{% endfor %}
+		{% else %}
+			<span id="no-tags">Aucun</span>
+		{% endif %}
+		</span>
+
+		<br>
+		<a href="#" id="add-tag" class="add">Ajouter</a>
+		<span id="add-tag-list"></span>
+
+
+	</div>
+
+	<div>
+		<strong>Propriétaire :<br></strong>
+		{{ object.owner }}
+	</div>
+
+	{% if object.date %}
+	<div>
+		<strong>Date du fichier :<br></strong>
+		{{ object.date|date:"SHORT_DATE_FORMAT" }}
+	</div>
+	{% endif %}
+
+	<div>
+		<strong>Taille :<br></strong>
+		{{ object.storage_size|filesizeformat }}
+	</div>
 
 </div>
+
+<br>
+<button class="btn btn-default" onclick="window.history.back()">
+	{% bootstrap_icon "arrow-left" %} Retour
+</button>
 
 <style>
 
 #core { max-width: 100vw; max-height: 56.25vw; }
+#core { border-radius: 3px; box-shadow: 0px 0px 4rem -1rem #999; }
 
-#main-container { padding: 0; }
+#main-container { padding: 0; text-align: center; }
+
+#image-info {text-align: center; margin: 20px 0; }
+#image-info div { display: inline-block; margin: 10px 20px; vertical-align: top; }
+
+.add { font-size: .8em; vertical-align: .1em; }
+.add::before { content: "[ "; }
+.add::after { content: " ]"; }
+
+.tags span.tag:after { content: ''; }
+
+#image-info .actor,
+#image-info .tag {
+	border: 1px solid #999; border-radius: 3px;
+	padding: 0 .25em; margin: .25em 0;
+	display: inline-block;
+}
+
+#image-info .btn-sm { padding: 0 5px; }
+
 
 </style>
 
 {% endblock %}
 
+
+{% block scripts %}
+
+<script>
+
+$(function() {
+	$('#add-actor').click(function(){
+		$.ajax({ url: "{% url 'actors_not_in_this_medium' object.pk %}" }).done(function(actors) {
+			$('#add-actor-list').html(actors).hide().fadeIn()
+			$('#add-actor, #no-actors').hide()
+			$('a[href*="add-"]').click(function(){
+				$(this).fadeOut()
+				var url = window.location.href + $(this).attr('href')
+				$.ajax({ url: url }).done(function(actor) {
+					$('#actors').append(' <span class="actor">' + actor + '</span>').hide.fadeIn()
+				})
+				return false
+			})
+		})
+		return false
+	})
+});
+
+$(function() {
+	$('#add-tag').click(function(){
+		$.ajax({ url: "{% url 'tags_not_in_this_medium' object.pk %}" }).done(function(actors) {
+			$('#add-tag-list').html(actors).hide().fadeIn()
+			$('#add-tag, #no-tags').hide()
+			$('a[href*="tag-"]').click(function(){
+				$(this).fadeOut()
+				var url = window.location.href + $(this).attr('href')
+				$.ajax({ url: url }).done(function(tag) {
+					$('#tags').append(' <span class="tag">' + tag + '</span>').hide.fadeIn()
+				})
+				return false
+			})
+		})
+		return false
+	})
+});
+
+
+</script>
+
+{% endblock %}

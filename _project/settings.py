@@ -107,8 +107,8 @@ if CLOUD_STORAGE :
 		}
 
 	AWS_STORAGE_BUCKET_NAME = 'picturesque'
-	AWS_ACCESS_KEY_ID = 'AKIAJPF2RKAOQO7OY7XQ'
-	AWS_SECRET_ACCESS_KEY = '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'
+	AWS_ACCESS_KEY_ID = '' # set in local settings
+	AWS_SECRET_ACCESS_KEY = '' # set in local settings
 
 	# Tell django-storages that when coming up with the URL for an item in S3 storage, keep
 	# it simple - just use this domain plus the path. (If this isn't set, things get complicated).

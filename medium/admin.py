@@ -9,3 +9,5 @@ from .models import *
 
 admin.site.register(Medium)
 admin.site.register(Actor)
+admin.site.register(Tag)
+admin.site.register(Category)

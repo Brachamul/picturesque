@@ -60,12 +60,9 @@
 </footer>	
 
 
-
-{% block scripts %}
+<!-- SCRIPTS BLOCK -->
 
 {% include "spinner.html" %}
-
-<!-- SCRIPTS BLOCK -->
 
 {% from_settings "IMPORT_JQUERY" %}
 
@@ -73,6 +70,8 @@
 <script>(function($,d){$.each(readyQ,function(i,f){$(f)});$.each(bindReadyQ,function(i,f){$(d).bind("ready",f)})})(jQuery,document)</script>
 
 {% from_settings "IMPORT_BOOTSTRAP_JS" %}
+
+{% block scripts %}
 
 {% comment %} More scripts are loaded here by lower level templates {% endcomment %}
 

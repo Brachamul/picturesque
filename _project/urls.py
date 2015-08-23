@@ -9,10 +9,10 @@ from django.contrib.auth.decorators import login_required
 admin.site.site_header = settings.ADMIN_SITE_HEADER
 
 urlpatterns = [
-#	url(r'^$', RedirectView.as_view(url=reverse_lazy('media_list'), permanent=False)),
+	url(r'^$', RedirectView.as_view(url="/medium", permanent=False)),
 	url(r'^admin/', include(admin.site.urls), name='admin'),
 	url(r'^medium/', include('medium.urls'), name='medium'),
-	url('^', include('django.contrib.auth.urls')),
+	url(r'^accounts/', include('django.contrib.auth.urls')),
 	url(r'^progressbarupload/', include('progressbarupload.urls')),
 ]
 

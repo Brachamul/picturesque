@@ -28,7 +28,7 @@ class Medium(models.Model):
 		# check for orientation before doing that !
 		try:
 			source = Image.open(self.source)
-			source.thumbnail((settings.THUMBNAIL_HEIGHT, settings.THUMBNAIL_WIDTH))
+			source.thumbnail((settings.THUMBNAIL_WIDTH, settings.THUMBNAIL_HEIGHT))
 			f = BytesIO()
 			source.save(f, format='png')
 			self.thumbnail.save(self.source.name, ContentFile(f.getvalue()))
@@ -36,7 +36,7 @@ class Medium(models.Model):
 		finally: f.close()
 		try :
 			source = Image.open(self.source)
-			source.thumbnail((settings.RATIONALIZED_HEIGHT, settings.RATIONALIZED_WIDTH))
+			source.thumbnail((settings.RATIONALIZED_WIDTH, settings.RATIONALIZED_HEIGHT))
 			f = BytesIO()
 			source.save(f, format='png')
 			self.main.save(self.source.name, ContentFile(f.getvalue()))
@@ -66,8 +66,17 @@ class Actor(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	slug = AutoSlugField(max_length=255, populate_from=('name'))
 	user = models.OneToOneField(User, blank=True, null=True)
-	media = models.ManyToManyField(Medium)
+	media = models.ManyToManyField(Medium, blank=True, null=True)
+	def __str__(self): return self.name
 
+class Category(models.Model):
+	name = models.CharField(max_length=255, unique=True)
+	def __str__(self): return self.name
+
+class Tag(models.Model):
+	name = models.CharField(max_length=255, unique=True)
+	category = models.ForeignKey(Category, blank=True, null=True)
+	media = models.ManyToManyField(Medium, blank=True, null=True)
 	def __str__(self): return self.name
 
 from django.db.models.signals import post_save
