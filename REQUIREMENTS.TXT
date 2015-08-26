@@ -3,6 +3,7 @@ Django==1.8.3
 django-autoslug==1.8.0
 django-bootstrap3==6.1.0
 django-multiupload==0.5
--e git+http://github.com/ouhouhsami/django-progressbarupload.git@eb5fb8066736ae926f4ea24f9c5f066513d782c6#egg=django_progressbarupload-master
+django-sslify==0.2.7
 django-storages-redux==1.2.3
 Pillow==2.9.0
+wheel==0.24.0

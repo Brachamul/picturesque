@@ -28,11 +28,12 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles',
 	'medium',
 	'PIL',
-	'storages', # django-storage-redux
+	'storages', # django-storages-redux
 	'bootstrap3', # django-bootstrap3
 )
 
 MIDDLEWARE_CLASSES = (
+	'sslify.middleware.SSLifyMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
@@ -212,28 +213,6 @@ THUMBNAIL_WIDTH = 640
 THUMBNAIL_HEIGHT = 360
 
 SUCCESSFUL_MEDIA_UPLOAD_MESSAGE = 'Vos photos / vidéos ont bien été chargées.'
-
-
-
-
-
-
-
-
-### Progress Bar
-
-# django-progressbarupload
-
-# INSTALLED_APPS += ('progressbarupload', )
-# 
-# FILE_UPLOAD_HANDLERS = (
-#    "progressbarupload.uploadhandler.ProgressBarUploadHandler",
-#     "django.core.files.uploadhandler.MemoryFileUploadHandler",
-#     "django.core.files.uploadhandler.TemporaryFileUploadHandler",
-# )
-# 
-# PROGRESSBARUPLOAD_INCLUDE_JQUERY = False
-
 
 
 
