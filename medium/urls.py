@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = patterns('',
 	url(r'^$', login_required(views.MediaWall.as_view()), name='media_wall'),
-	url(r'^mymedia/$', login_required(views.MyMediaListView.as_view()), name='my_media'),
+	url(r'^my_media/$', login_required(views.MyMediaListView.as_view()), name='my_media'),
 	url(r'^(?P<pk>[0-9]+)/$', views.MediumDetailView.as_view(), name='medium_detail'),
 	url(r'^upload/$', login_required(views.UploadFormView.as_view()), name='upload_media'),
 	url(r'^actor/create/$', login_required(views.ActorCreateView.as_view()), name='create_actor'),

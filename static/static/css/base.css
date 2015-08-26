@@ -10,7 +10,7 @@ body { font-family: 'Open Sans', sans-serif; background-color: #fafafa; }
 
 footer { margin-top: 4em; }
 
-.navbar { margin: 0; }
+.navbar { margin: 0 0 10px 0; box-shadow: 0px 0px 2rem -1rem rgb(153, 153, 153); }
 .navbar .container-fluid { padding: 1rem 2%; }
 .navbar .navbar-brand .glyphicon { font-size: .88em; margin-right: -.2em; }
 .navbar .navbar-brand { font-size: 2.4rem; }
@@ -61,7 +61,13 @@ footer { margin-top: 4em; }
  
 .glyphicon { margin-right: .4em; }
 
-.tags span:not(:last-of-type)::after { content: ", "; }
+.actor, .tag {
+	border: 1px solid #999; border-radius: 3px;
+	padding: 0.1em .25em; margin: .25em 0;
+	line-height: 1.2;
+	display: inline-block;
+	transition: all .5s;
+}
 
 .glyphicon + .icon-counter {
 	position: absolute;

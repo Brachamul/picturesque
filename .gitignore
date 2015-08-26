@@ -44,4 +44,5 @@ Icon
 __pycache__/
 static/static-only/
 static/media/
+_media_root/
 local_settings.py

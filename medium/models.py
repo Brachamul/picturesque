@@ -14,6 +14,8 @@ from autoslug.fields import AutoSlugField
 class Category(models.Model):
 	name = models.CharField(max_length=255, unique=True, verbose_name="catégorie")
 	def __str__(self): return self.name
+	class Meta :
+		verbose_name_plural = "categories"
 
 
 class Tag(models.Model):
@@ -36,36 +38,43 @@ class Medium(models.Model):
 	thumbnail = models.FileField(upload_to=settings.MEDIUM_THUMBNAILS_URL, blank=True, null=True)
 	content_type = models.CharField(max_length=255, choices=(("VIDEO", "Vidéo"), ("IMAGE", "Image"), ("UNKNOWN", "Inconnu")), blank=True)
 	owner = models.ForeignKey(User, blank=True, null=True)
+	date_uploaded = models.DateTimeField(auto_now_add=True)
+	exif = models.CharField(max_length=5000, blank=True, null=True)
 	date = models.CharField(max_length=255, blank=True, null=True)
 	tags = models.ManyToManyField(Tag, blank=True)
 	actors = models.ManyToManyField(Actor, blank=True)
 
 	class Meta :
 		verbose_name_plural = "photos"
+		ordering = ['-date_uploaded']
 
 #	def __str__(self): str(self.source.name)
 
 	def process_image(self):
 		# check for orientation before doing that !
-		try:
-			source = Image.open(self.source)
+		with Image.open(self.source.path) as source :
 			source.thumbnail((settings.THUMBNAIL_WIDTH, settings.THUMBNAIL_HEIGHT))
 			f = BytesIO()
 			source.save(f, format='png')
 			self.thumbnail.save(self.source.name, ContentFile(f.getvalue()))
 			self.save()
-		finally: f.close()
-		try :
-			source = Image.open(self.source)
+			f.close()
+
+		with Image.open(self.source.path) as source :
 			source.thumbnail((settings.RATIONALIZED_WIDTH, settings.RATIONALIZED_HEIGHT))
 			f = BytesIO()
 			source.save(f, format='png')
 			self.main.save(self.source.name, ContentFile(f.getvalue()))
 			self.save()
-		finally: f.close()
-		try : self.date = Image.open(self.source)._getexif()[306]
-		except : pass
-		else : self.save()
+			f.close()
+
+		with Image.open(self.source.path) as source :
+			try : self.date = source._getexif()[306]
+			except TypeError: pass 
+
+		os.remove(self.source.path)
+		self.source = None
+		self.save()
 
 	def get_tags(self):
 		tags = ()

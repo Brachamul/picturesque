@@ -40,7 +40,7 @@
 	<div>
 		<strong>Tags :<br> </strong>
 
-		<span class="tags">
+		<span id="tags">
 		{% if object.tags.all %}
 			{% for tag in object.tags.all %}
 				<span class="tag">{{ tag.name }}</span>
@@ -80,7 +80,7 @@
 
 <br>
 
-<button class="btn btn-default" onclick="window.history.back()">
+<button class="btn btn-default" onclick="javascript:window.location = document.referrer;">
 	{% bootstrap_icon "arrow-left" %} Retour
 </button>
 
@@ -95,18 +95,14 @@
 #image-info {text-align: center; margin: 20px 0; }
 #image-info div { display: inline-block; margin: 10px 20px; vertical-align: top; }
 
+@media screen and (min-width: 768px) {
+	#image-info div { max-width: 25%; }
+
+}
+
 .add { font-size: .8em; vertical-align: .1em; }
 .add::before { content: "[ "; }
 .add::after { content: " ]"; }
-
-.tags span.tag:after { content: ''; }
-
-#image-info .actor,
-#image-info .tag {
-	border: 1px solid #999; border-radius: 3px;
-	padding: 0 .25em; margin: .25em 0;
-	display: inline-block;
-}
 
 #image-info .btn-sm { padding: 0 5px; }
 
@@ -129,14 +125,14 @@ $(function() {
 				$(this).fadeOut()
 				var url = window.location.href + $(this).attr('href')
 				$.ajax({ url: url }).done(function(actor) {
-					$('#actors').append(' <span class="actor">' + actor + '</span>').hide.fadeIn()
+					$('#actors').append(' <span class="actor">' + actor + '</span>').hide().fadeIn()
 				})
 				return false
 			})
 		})
 		return false
 	})
-});
+})
 
 $(function() {
 	$('#add-tag').click(function(){
@@ -147,14 +143,14 @@ $(function() {
 				$(this).fadeOut()
 				var url = window.location.href + $(this).attr('href')
 				$.ajax({ url: url }).done(function(tag) {
-					$('#tags').append(' <span class="tag">' + tag + '</span>').hide.fadeIn()
+					$('#tags').append(' <span class="tag">' + tag + '</span>').hide().fadeIn()
 				})
 				return false
 			})
 		})
 		return false
 	})
-});
+})
 
 
 </script>

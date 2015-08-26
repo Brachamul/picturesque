@@ -53,7 +53,7 @@
 </header>
 
 <div id="main-container" class="container-fluid main-container" >
-	{% if messages %}<div class="col-sm-12">{% include "messages.html" %}</div>{% endif %}
+	{% if messages %}{% include "messages.html" %}{% endif %}
 	{% block content %}{% endblock content %}
 </div>
 

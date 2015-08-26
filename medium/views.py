@@ -15,21 +15,26 @@ from .forms import *
 
 class MediaWall(ListView):
 	model = Medium
+	def get_context_data(self, **kwargs):
+		context = super(MediaWall, self).get_context_data(**kwargs)
+		context['categories'] = Category.objects.all()
+		context['actors'] = Actor.objects.all()
+		context['title'] = "Accueil"
+		return context
+
+class MyMediaListView(MediaWall):
+	def get_queryset(self):
+		return Medium.objects.filter(owner=self.request.user)
+	def get_context_data(self, **kwargs):
+		context = super(MyMediaListView, self).get_context_data(**kwargs)
+		context['title'] = "Mes médias"
+		return context
 
 class MediumDetailView(DetailView):
 	model = Medium
 	def get_context_data(self, **kwargs):
 		context = super(MediumDetailView, self).get_context_data(**kwargs)
 		context['object'].storage_size = self.object.storage_size()
-		return context
-
-class MyMediaListView(ListView):
-	model = Medium
-	def get_queryset(self):
-		return Medium.objects.filter(owner=self.request.user).order_by('date')
-	def get_context_data(self, **kwargs):
-		context = super(MyMediaListView, self).get_context_data(**kwargs)
-		context['title'] = "Mes médias"
 		return context
 
 class ActorDetailView(DetailView): model = Actor
@@ -57,14 +62,14 @@ class TagCreateView(CreateView):
 class UploadFormView(FormView):
 	template_name = 'form.html'
 	form_class = UploadForm
-	success_url = '../'
+	success_url = reverse_lazy('my_media')
 
 	def form_valid(self, form):
 		owner = self.request.user
 		for each in form.cleaned_data['media']:
 			medium = Medium.objects.create(source=each, owner=owner)
 			medium.tags = form.cleaned_data['tags']
-#		messages.success(request, settings.SUCCESSFUL_MEDIA_UPLOAD_MESSAGE)
+		messages.success(self.request, settings.SUCCESSFUL_MEDIA_UPLOAD_MESSAGE)
 		return super(UploadFormView, self).form_valid(form)
 
 @login_required
@@ -92,14 +97,14 @@ def tags_not_in_this_medium(request, pk):
 	except Medium.DoesNotExist : raise Http404("Ce medium n'existe pas, ou plus.")
 	tags = Tag.objects.exclude(medium__pk=pk) # tags not in this medium
 	html = ''
-	for tag in tags : html += '<a href="tag-' + tag.name + '" class="btn btn-default btn-sm"> + ' + tag.name + '</a> '
+	for tag in tags : html += '<a href="tag-' + tag.slug + '" class="btn btn-default btn-sm"> + ' + tag.name + '</a> '
 	return HttpResponse(html)
 
 @login_required
-def add_tag_to_medium(request, pk, name):
+def add_tag_to_medium(request, pk, slug):
 	try : medium = Medium.objects.get(pk=pk)
 	except Medium.DoesNotExist : raise Http404("Ce medium n'existe pas, ou plus.")
-	try : tag = Tag.objects.get(name=name)
+	try : tag = Tag.objects.get(slug=slug)
 	except tag.DoesNotExist : raise Http404("Cet acteur n'existe pas, ou plus.")
 	medium.tags.add(tag)
 	medium.save()
