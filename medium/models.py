@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage as storage
 
 from PIL import Image
 from io import BytesIO
@@ -52,7 +53,7 @@ class Medium(models.Model):
 
 	def process_image(self):
 		# check for orientation before doing that !
-		with Image.open(self.source.path) as source :
+		with Image.open(storage.open(self.source.name)) as source :
 			source.thumbnail((settings.THUMBNAIL_WIDTH, settings.THUMBNAIL_HEIGHT))
 			f = BytesIO()
 			source.save(f, format='png')
@@ -60,7 +61,7 @@ class Medium(models.Model):
 			self.save()
 			f.close()
 
-		with Image.open(self.source.path) as source :
+		with Image.open(storage.open(self.source.name)) as source :
 			source.thumbnail((settings.RATIONALIZED_WIDTH, settings.RATIONALIZED_HEIGHT))
 			f = BytesIO()
 			source.save(f, format='png')
@@ -68,11 +69,11 @@ class Medium(models.Model):
 			self.save()
 			f.close()
 
-		with Image.open(self.source.path) as source :
+		with Image.open(storage.open(self.source.name)) as source :
 			try : self.date = source._getexif()[306]
 			except TypeError: pass 
 
-		os.remove(self.source.path)
+		os.remove(storage.open(self.source.name))
 		self.source = None
 		self.save()
 
