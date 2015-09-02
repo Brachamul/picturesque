@@ -73,7 +73,7 @@ class Medium(models.Model):
 			try : self.date = source._getexif()[306]
 			except TypeError: pass 
 
-		storage.delete(self.source.name)
+#		storage.delete(self.source.name)
 		self.source = None
 		self.save()
 
